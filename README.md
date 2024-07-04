@@ -93,11 +93,13 @@ Stable diffusion으로 생성한 이미지는 시각적으로 자연스럽고 �
 
     ![productfix_text](assets/productfix_text.png)
     only IC-Light / **Latent injection** / detail transfer / **Text transfer**
+  
     ![producfix_text_closeup](assets/productfix_text_closeup.png)
     close up
     <br/><br/>
     ![productfix_adapter](assets/productfix_adapter.png)
     only IC-Light / **Latent injection** / detail transfer / **Text transfer**
+  
     ![producfix_adapter_closeup](assets/productfix_adapter_closeup.png)
     close up
     <br/><br/>
