@@ -125,11 +125,7 @@ CLIP Skip은 텍스트 조건을 적용할 때, **샘플링 과정의 마지막 
     
     ![latent_injection_flow](assets/latent_injection_flow.jpg)
     
-    $$
-    X_t=\begin{cases}
-    CO(X_{t}\cdot M,(P+\eta\cdot\sigma_t)\cdot inv(M),&\sigma_{end} \leq \sigma_t \leq  \sigma_{start} \\ 
-    X_t,& otherwise\end{cases}
-    $$
+    ![math](assets/math.svg)
     
     $X_t$ : sample
     
