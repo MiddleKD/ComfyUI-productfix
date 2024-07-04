@@ -29,31 +29,45 @@ Stable diffusion으로 생성한 이미지는 시각적으로 자연스럽고 �
 
 ## 💡 Features
 
-- Apply Latent Injection
-    - ComfyUI의 KSampler 노드를 hijack하여 Latent injection을 수행하도록 설정합니다.
-    - 실행이 완료되면 본래 KSampler 노드로 복구합니다.
-- Get Text Mask
-    - Easy OCR 패키지를 이용하여 Text Mask를 Tensor로 불러오는 노드입니다.
-    - Easy OCR custom node는 이미 존재하지만(https://github.com/JaidedAI/EasyOCR), PIL 패키지 사용방법이 stable하지 않기 때문에 이 노드 사용을 추천합니다.
-- Reset Model Patcher Calculate Weight
-    - 다른 node에서 Modelpatcher의 calculate weight 함수를 injection했다면 오류가 발생하는 custom node가 다수 존재합니다.(ex: comfyui-inpaint-nodes https://github.com/Acly/comfyui-inpaint-nodes)
-    - 이를 원본 Modelpatcher의 calculate weight로 reset하여 문제를 해결하는 노드입니다.
+<details>
+  <summary><strong>Apply Latent Injection</strong></summary>
+  <ul>
+    <li>ComfyUI의 KSampler 노드를 hijack하여 Latent injection을 수행하도록 설정합니다.</li>
+    <li>실행이 완료되면 본래 KSampler 노드로 복구합니다.</li>
+  </ul>
+</details>
+
+<details>
+  <summary><strong>Get Text Mask</strong></summary>
+  <ul>
+    <li>Easy OCR 패키지를 이용하여 Text Mask를 Tensor로 불러오는 노드입니다.</li>
+    <li>Easy OCR custom node는 이미 존재하지만(<a href="https://github.com/JaidedAI/EasyOCR">https://github.com/JaidedAI/EasyOCR</a>), PIL 패키지 사용방법이 stable하지 않기 때문에 이 노드 사용을 추천합니다.</li>
+  </ul>
+</details>
+
+<details>
+  <summary><strong>Reset Model Patcher Calculate Weight</strong></summary>
+  <ul>
+    <li>다른 node에서 Modelpatcher의 calculate weight 함수를 injection했다면 오류가 발생하는 custom node가 다수 존재합니다.(ex: comfyui-inpaint-nodes <a href="https://github.com/Acly/comfyui-inpaint-nodes">https://github.com/Acly/comfyui-inpaint-nodes</a>)</li>
+    <li>이를 원본 Modelpatcher의 calculate weight로 reset하여 문제를 해결하는 노드입니다.</li>
+  </ul>
+</details>
 
 ## 🏃🏻‍♂️ Application
-- Comparing “IC-Light + Text” / “IC-Light + Text + **Latent Injection”**
+- ### **Comparing “IC-Light + Text” / “IC-Light + Text + Latent Injection”**
     
     condition / Input / IC-Light / **latent injection($\sigma_{end}$=1.0)** / **latent injection($\sigma_{end}$=0.5)**
     ![ic_light_text](assets/iclight_injection.png)
     prompt: product photo, professional photography, realistic, leaf, outdoors / seed: 42
-    <br/><br/>
-    Latent injection은 IC-Light와 IP-Adapter를 함께 사용할 때 진가를 발휘합니다.템플릿 스타일 이미지와 상품을 합성할 때 사용해보세요!
 
-- Comparing “IC-Light + IP-Adapter” / “IC-Light + IP-Adapter + **Latent Injection”**
+- ### **Comparing “IC-Light + IP-Adapter” / “IC-Light + IP-Adapter + Latent Injection”**
     
     condition / Input / IC-Light / **latent injection($\sigma_{end}$=1.0)** / **latent injection($\sigma_{end}$=0.5)**
     ![ic_light_adapter](assets/iclight_injection_adapter.png)
     prompt: product photo, professional photography, realistic / seed: 42
-- IC-Light + controlnet + text condition + **Text transfer** + **Latent Injection**
+    <br/><br/>
+    Latent injection은 IC-Light와 IP-Adapter를 함께 사용할 때 진가를 발휘합니다.템플릿 스타일 이미지와 상품을 합성할 때 사용해보세요!
+- ### **IC-Light + controlnet + text condition + Text transfer + Latent Injection**
 
     ![latent_injection_text](assets/more_results_0.png)
     Items in my room captured with my phone camera
@@ -61,7 +75,7 @@ Stable diffusion으로 생성한 이미지는 시각적으로 자연스럽고 �
     prompt: product photo, professional photography, realistic, water, bubble / seed: 42 / controlnet: depth
     ![latent_injection_text](assets/more_results_2.png)
     prompt: product photo, professional photography, realistic, flowers, outdoors / seed: 42 / controlnet: depth
-- IC-Light + controlnet + IP-Adapter + **Text transfer** + **Latent Injection**
+- ### **IC-Light + controlnet + IP-Adapter + Text transfer + Latent Injection**
 
     ![latent_injection_adapter](assets/more_results_0.png)
     Items in my room captured with my phone camera
@@ -72,7 +86,7 @@ Stable diffusion으로 생성한 이미지는 시각적으로 자연스럽고 �
 
     ![latent_injection_adapter](assets/more_results_4.png)
     prompt: product photo, professional photography, realistic / seed: 42 / controlnet: depth
-- **Text transfer**
+- ### **Text transfer**
 
     ![producfix_src](assets/productfix_src.png)
     Input / text condition / image condition(IP-Adapter)
@@ -89,25 +103,25 @@ Stable diffusion으로 생성한 이미지는 시각적으로 자연스럽고 �
     <br/><br/>
     Text transfer는 입력 객체의 텍스트를 보존하기 위해 개발된 OCR 텍스트 마스크 기반 Detail transfer application입니다. `GetTextMask` node와 `DetailTransfer` node를 활용해 구현 가능합니다.
 
-- Upscaled results + Text detail transfer
+- ### **Upscaled results + Text detail transfer**
     ![upsvaled_results](assets/upscaled_results.png)
 
 
 ## 🛠 Approach
 
-- Background: Inpainting
+- ### Background: Inpainting
 Diffusion 모델의 Inpainting은 마스크를 조건으로 이미지를 생성합니다. 각 샘플링 단계에서 마스크를 기준으로 원본과 생성된 잠재 공간을 합성합니다. 이 방법은 입력 객체를 유지하면서 마스크 영역을 생성할 수 있지만, **저품질 입력 객체(예: 스마트폰으로 촬영)의 경우 결과 이미지 품질도 저하되는 한계**가 있습니다.
 
-- Background: IC-Light
+- ### Background: IC-Light
 IC-Light는 전경과 배경의 조명을 조작하는 혁신적인 Adapter Unet입니다. 입력 객체의 재조명을 통해 저품질 객체도 우수한 결과 이미지로 변환합니다. 그러나 **전경 생성 과정에서 객체 세부 사항이 변형되는 문제**는 여전히 존재합니다.
 
-- Background: Kandinsky Inpainting Process
+- ### Background: Kandinsky Inpainting Process
 Kandinsky diffusion inpainting은 일반적인 inpainting과 차이가 있습니다. 샘플링 단계마다 잠재 공간을 합성할 때, **원본 대신 scheduler의 sigma 값에 따른 노이즈가 추가된 잠재 공간을 사용**합니다. 이 방식은 일관된 노이즈를 통해 품질 향상을 이끌어냅니다.
 
-- Background: CLIP Skip
+- ### Background: CLIP Skip
 CLIP Skip은 텍스트 조건을 적용할 때, **샘플링 과정의 마지막 단계까지 적용하지 않고 중간에 중단하는 추론 방법**입니다. 이는 조건을 제어하여 전체 맥락에 부합하는 결과 이미지를 생성하는 효과가 있습니다.
 
-- **Solution: Latent injection**
+- ### Solution: Latent injection
     
     ![latent_injection_flow](assets/latent_injection_flow.jpg)
     
@@ -138,13 +152,13 @@ pip install -r requirements.txt
 
 ## 🖥 How to use
 
-**ComfyUI-workflows**
+### **ComfyUI-workflows**
 
-- IC-Light + controlnet + text condition + Text transfer + **Latent Injection**
+- **IC-Light + controlnet + text condition + Text transfer + Latent Injection**
     ![latent_injection_flow](assets/productfix_text_comfyui.png)
     
     [여기서](workflows/productfix_text.json) workflow를 다운로드 할 수 있습니다.
-- IC-Light + controlnet + IP-Adapter + Text transfer + **Latent Injection**
+- **IC-Light + controlnet + IP-Adapter + Text transfer + Latent Injection**
     ![latent_injection_flow](assets/productfix_adapter_comfyui.png)
 
     [여기서](workflows/productfix_adapter.json) workflow를 다운로드 할 수 있습니다.
