@@ -14,7 +14,7 @@ e-commerce 상품의 텍스트, 로고, 디테일 등을 유지하면서 이미�
 
 - [Introduction](#-introduction)
 - [Features](#-features)
-- [Aplication](#️-application)
+- [Application](#️-application)
 - [Approach](#-approach)
 - [Install](#-install)
 - [How to use](#-how-to-use)
