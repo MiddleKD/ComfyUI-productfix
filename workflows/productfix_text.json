@@ -1289,10 +1289,10 @@
         1808,
         -1132
       ],
-      "size": [
-        229.72877729491302,
-        106.12561347655992
-      ],
+      "size": {
+        "0": 229.72877502441406,
+        "1": 106.1256103515625
+      },
       "flags": {},
       "order": 34,
       "mode": 0,
@@ -1334,10 +1334,10 @@
         1267,
         -719
       ],
-      "size": [
-        527.7004413085936,
-        650.6592523437498
-      ],
+      "size": {
+        "0": 527.700439453125,
+        "1": 650.6592407226562
+      },
       "flags": {},
       "order": 32,
       "mode": 0,
@@ -1528,29 +1528,6 @@
       ]
     },
     {
-      "id": 119,
-      "type": "Note",
-      "pos": [
-        -128,
-        -875
-      ],
-      "size": [
-        246.45437622070312,
-        147.9110107421875
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "properties": {
-        "text": ""
-      },
-      "widgets_values": [
-        "Please ensure that the start_sigma or end_sigma values vary in each run.\n\nThis is an inconvenience but necessary for maintaining stable code. I will update it once a solution is found.\n\n-middlek-"
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
       "id": 116,
       "type": "ApplyLatentInjection",
       "pos": [
@@ -1559,7 +1536,7 @@
       ],
       "size": {
         "0": 317.4000244140625,
-        "1": 142
+        "1": 166
       },
       "flags": {},
       "order": 26,
@@ -1611,8 +1588,32 @@
       },
       "widgets_values": [
         10,
-        0.4
+        0.4,
+        true
       ]
+    },
+    {
+      "id": 119,
+      "type": "Note",
+      "pos": [
+        -130,
+        -882
+      ],
+      "size": [
+        258.6555528877194,
+        218.37637102111307
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "properties": {
+        "text": ""
+      },
+      "widgets_values": [
+        "The remain_injected option determines whether to revert the injected function back to its original state or keep it injected. If you are running 'this workflow' multiple times, set this to true.\n\nHowever, if you are working across 'multiple workflows' or using the API, set this to false. This will help ensure stable operation.\n\nWhen set to false, please ensure that the start_sigma or end_sigma values vary with each run.\n\n-middlek-"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
     }
   ],
   "links": [
@@ -2175,10 +2176,10 @@
       "software": "ComfyUI"
     },
     "ds": {
-      "scale": 0.3855432894295318,
+      "scale": 1.2100000000000002,
       "offset": {
-        "0": 2308.323974609375,
-        "1": 1757.472900390625
+        "0": 453.6419677734375,
+        "1": 1064.0616455078125
       }
     }
   },

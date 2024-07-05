@@ -1145,10 +1145,10 @@
         1808,
         -1132
       ],
-      "size": [
-        229.72877729491302,
-        106.12561347655992
-      ],
+      "size": {
+        "0": 229.72877502441406,
+        "1": 106.1256103515625
+      },
       "flags": {},
       "order": 36,
       "mode": 0,
@@ -1190,10 +1190,10 @@
         1267,
         -719
       ],
-      "size": [
-        527.7004413085936,
-        650.6592523437498
-      ],
+      "size": {
+        "0": 527.700439453125,
+        "1": 650.6592407226562
+      },
       "flags": {},
       "order": 34,
       "mode": 0,
@@ -1384,29 +1384,6 @@
       ]
     },
     {
-      "id": 119,
-      "type": "Note",
-      "pos": [
-        -128,
-        -875
-      ],
-      "size": [
-        246.45437622070312,
-        147.9110107421875
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "properties": {
-        "text": ""
-      },
-      "widgets_values": [
-        "Please ensure that the start_sigma or end_sigma values vary in each run.\n\nThis is an inconvenience but necessary for maintaining stable code. I will update it once a solution is found.\n\n-middlek-"
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
       "id": 96,
       "type": "LoraLoader",
       "pos": [
@@ -1465,10 +1442,10 @@
         508,
         -833
       ],
-      "size": [
-        355.20001220703125,
-        238
-      ],
+      "size": {
+        "0": 355.20001220703125,
+        "1": 238
+      },
       "flags": {},
       "order": 29,
       "mode": 0,
@@ -1550,7 +1527,7 @@
         "1": 647.229736328125
       },
       "flags": {},
-      "order": 3,
+      "order": 2,
       "mode": 0,
       "outputs": [
         {
@@ -1589,7 +1566,7 @@
         "1": 98
       },
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "outputs": [
         {
@@ -1639,7 +1616,7 @@
       ],
       "size": {
         "0": 317.4000244140625,
-        "1": 142
+        "1": 166
       },
       "flags": {},
       "order": 27,
@@ -1691,7 +1668,8 @@
       },
       "widgets_values": [
         10,
-        0.4
+        0.4,
+        true
       ]
     },
     {
@@ -1701,12 +1679,12 @@
         -2224,
         -664
       ],
-      "size": [
-        522.5623378906241,
-        479.2657929687492
-      ],
+      "size": {
+        "0": 522.5623168945312,
+        "1": 479.26580810546875
+      },
       "flags": {},
-      "order": 5,
+      "order": 4,
       "mode": 0,
       "outputs": [
         {
@@ -1733,6 +1711,29 @@
         "style_example.jpg",
         "image"
       ]
+    },
+    {
+      "id": 119,
+      "type": "Note",
+      "pos": [
+        -128,
+        -875
+      ],
+      "size": [
+        242.12662726788471,
+        223.3350487070635
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "properties": {
+        "text": ""
+      },
+      "widgets_values": [
+        "The remain_injected option determines whether to revert the injected function back to its original state or keep it injected. If you are running 'this workflow' multiple times, set this to true.\n\nHowever, if you are working across 'multiple workflows' or using the API, set this to false. This will help ensure stable operation.\n\nWhen set to false, please ensure that the start_sigma or end_sigma values vary with each run.\n\n-middlek-"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
     }
   ],
   "links": [
@@ -2311,10 +2312,10 @@
       "software": "ComfyUI"
     },
     "ds": {
-      "scale": 0.8264462809917359,
+      "scale": 1.2100000000000002,
       "offset": {
-        "0": -1408.10986328125,
-        "1": 1062.4517822265625
+        "0": 730.1867065429688,
+        "1": 1262.93359375
       }
     }
   },
