@@ -13,7 +13,13 @@ from .utils import (simple_resize, add_detail_transfer)
 
 # ModelPatcher의 calculate_weight 메서드를 초기화하는 클래스
 class ResetModelPatcherCalculateWeight:
-    # ... (INPUT_TYPES, RETURN_TYPES, FUNCTION, CATEGORY 정의)
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"model":("MODEL", ),
+                             }}
+    RETURN_TYPES = ("MODEL",)
+    FUNCTION = "reset_moodelpatcher_weight"
+    CATEGORY = "productfix"
 
     def reset_moodelpatcher_weight(self, model:ModelPatcher):
         # 원래의 calculate_weight 메서드로 복원
@@ -24,18 +30,45 @@ class ResetModelPatcherCalculateWeight:
 
 # 잠재 공간에 이미지를 주입하는 클래스
 class ApplyLatentInjection:
-    # ... (INPUT_TYPES, RETURN_TYPES, FUNCTION, CATEGORY 정의)
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"model":("MODEL", ),
+                             "latents": ("LATENT", ),
+                             "inject_image_embed": ("LATENT", ),
+                             "inject_mask": ("MASK",),
+                             "start_sigma": ("FLOAT", {"default": 15.0}),
+                             "end_sigma": ("FLOAT", {"default": 0.0})
+                             }}
+    RETURN_TYPES = ("MODEL", "LATENT",)
+    FUNCTION = "apply_latent_injection"
+    CATEGORY = "productfix"
 
     def apply_latent_injection(self, model, latents, inject_image_embed, inject_mask, start_sigma, end_sigma):
+        device = model_management.get_torch_device()
+        dtype = model_management.VAE_DTYPES[0]
+
         # KSamplerX0Inpaint의 __call__ 메서드를 수정된 버전으로 교체
         original_ksampler_call_fn = KSamplerX0Inpaint.__call__
         KSamplerX0Inpaint.__call__ = inject_ksamplerx0inpaint_call(original_ksampler_call_fn)
-        logging.info("\033[94m[middlek image injection] KSamplerX0Inpaint.__call__ is injected to inject_ksamplerx0inpaint_call\033[0m")
+        logging.info("\033[94m[middlek latent injection] KSamplerX0Inpaint.__call__ is injected to inject_ksamplerx0inpaint_call\033[0m")
 
         # 잠재 공간 및 마스크 준비
-        # ... (데이터 형식 변환 및 디바이스 이동)
+        # (데이터 형식 변환 및 디바이스 이동)
+        if isinstance(inject_image_embed, dict):
+            inject_image_embed = inject_image_embed["samples"]
+        
+        inject_image_embed = inject_image_embed.to(dtype=dtype)
+        b, c, h, w = inject_image_embed.shape
+        if len(inject_mask.shape) != 4:
+            inject_mask = inject_mask.unsqueeze(0)
+        
+        inject_image_embed = inject_image_embed.to(device=device, dtype=dtype)
+        inject_mask = simple_resize(inject_mask, h, w).to(device=device, dtype=dtype)
+        
+        latents["samples"] = inject_image_embed
+        latents["noise_mask"] = inject_mask
 
-        # 모델 옵션에 이미지 주입 파라미터 추가
+        # 모델 옵션에 latent injection 파라미터 추가
         if hasattr(model, "model_options"):
             model.model_options["is_latent_inject"] = {"start_sigma":start_sigma, "end_sigma":end_sigma}
 
@@ -43,7 +76,18 @@ class ApplyLatentInjection:
 
 # VQ 모델을 로드하는 클래스
 class VQLoader:
-    # ... (INPUT_TYPES, RETURN_TYPES, FUNCTION, CATEGORY 정의)
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "vq_name": ([os.path.basename(cur) for cur in folder_paths.get_filename_list("vae_approx") if "vq" in cur], ),
+            }
+        }
+
+    RETURN_TYPES = ("VQ", )
+
+    FUNCTION = "load_vq"
+    CATEGORY = "productfix"
 
     def load_vq(self, vq_name):
         ckpt = os.path.join(folder_paths.get_folder_paths("vae_approx")[0], vq_name)
@@ -52,7 +96,18 @@ class VQLoader:
 
 # VQ 모델을 사용하여 이미지를 인코딩하는 클래스
 class VQEncoder:
-    # ... (INPUT_TYPES, RETURN_TYPES, FUNCTION, CATEGORY 정의)
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "vq": ("VQ",),
+                "images": ("IMAGE", ),
+            }
+        }
+
+    RETURN_TYPES = ("LATENT", )
+    FUNCTION = "encode"
+    CATEGORY = "productfix"
 
     def encode(self, images, vq):
         latents = vqmodel_encode(images, vq)
@@ -61,7 +116,18 @@ class VQEncoder:
 
 # VQ 모델을 사용하여 잠재 공간을 디코딩하는 클래스
 class VQDecoder:
-    # ... (INPUT_TYPES, RETURN_TYPES, FUNCTION, CATEGORY 정의)
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "vq": ("VQ",),
+                "latents": ("LATENT", ),
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE", )
+    FUNCTION = "decode"
+    CATEGORY = "productfix"
 
     def decode(self, latents, vq):
         if isinstance(latents, dict):
@@ -71,7 +137,22 @@ class VQDecoder:
 
 # 이미지에서 텍스트 마스크를 생성하는 클래스
 class GetTextMask:
-    # ... (INPUT_TYPES, RETURN_TYPES, FUNCTION, CATEGORY 정의)
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                    "image": ("IMAGE",),
+                    "languages": (
+                        get_languages() + ["not use"],
+                        {"default": "not use"},
+                    ),
+                    "codes": (
+                        "STRING",
+                        {"default": "en,ko", "multiline": False},
+                    ),
+                             }}
+    RETURN_TYPES = ("MASK",)
+    FUNCTION = "get_text_mask"
+    CATEGORY = "productfix"
 
     def get_text_mask(self, image, languages:str, codes:str):
         # 언어 설정에 따라 타겟 언어 결정
@@ -85,7 +166,22 @@ class GetTextMask:
 
 # 디테일 전송을 수행하는 클래스 (이미지 도메인)
 class DetailTransferAdd:
-    # ... (INPUT_TYPES, RETURN_TYPES, FUNCTION, CATEGORY 정의)
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                    "target": ("IMAGE", ),
+                    "source": ("IMAGE", ),
+                    "blur": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 100.0, "step": 0.01}),
+                    "blend_ratio": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.001,  "round": 0.001}),
+                },
+            "optional": {
+                "mask": ("MASK", ),
+            }
+        }
+    
+    RETURN_TYPES = ("IMAGE",)
+    FUNCTION = "detail_transfer_add"
+    CATEGORY = "productfix"
 
     def detail_transfer_add(self, target, source, blur, blend_ratio, mask=None):
         output_image = add_detail_transfer(target, source, blur, blend_ratio, mask)
@@ -93,7 +189,22 @@ class DetailTransferAdd:
 
 # 디테일 전송을 수행하는 클래스 (잠재 공간 도메인)
 class DetailTransferLatentAdd:
-    # ... (INPUT_TYPES, RETURN_TYPES, FUNCTION, CATEGORY 정의)
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                    "target": ("LATENT", ),
+                    "source": ("LATENT", ),
+                    "blur": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 100.0, "step": 0.01}),
+                    "blend_ratio": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.001,  "round": 0.001}),
+                },
+            "optional": {
+                "mask": ("MASK", ),
+            }
+        }
+    
+    RETURN_TYPES = ("LATENT",)
+    FUNCTION = "detail_transfer_add"
+    CATEGORY = "productfix"
 
     def detail_transfer_add(self, target, source, blur, blend_ratio, mask=None):
         # 잠재 공간을 이미지 형식으로 변환

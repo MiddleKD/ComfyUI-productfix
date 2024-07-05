@@ -6,7 +6,7 @@ def inject_ksamplerx0inpaint_call(original_ksampler_call_fn):
     @wraps(original_ksampler_call_fn)
     def wrapper(self, x, sigma, denoise_mask, model_options={}, seed=None):
         
-        # latent 주입 옵션 확인
+        # latent injection 옵션 확인
         latent_inject_options = model_options.get("is_latent_inject")
         if latent_inject_options is not None:
             start_sigma = latent_inject_options["start_sigma"]
@@ -17,7 +17,7 @@ def inject_ksamplerx0inpaint_call(original_ksampler_call_fn):
             if "denoise_mask_function" in model_options:
                 denoise_mask = model_options["denoise_mask_function"](sigma, denoise_mask, extra_options={"model": self.inner_model, "sigmas": self.sigmas})
             
-            # 이미지 주입 로직
+            # latent injection 로직
             if latent_inject_options is not None:
                 if sigma.item() > end_sigma and sigma.item() < start_sigma:
                     latent_mask = 1. - denoise_mask
@@ -31,7 +31,7 @@ def inject_ksamplerx0inpaint_call(original_ksampler_call_fn):
         # 모델 실행
         out = self.inner_model(x, sigma, model_options=model_options, seed=seed)
         
-        # 후처리 (이미지 주입이 아닌 경우에만)
+        # 후처리 (latent injection이 아닌 경우에만)
         if denoise_mask is not None:
             if latent_inject_options is not None:
                 pass
@@ -41,7 +41,7 @@ def inject_ksamplerx0inpaint_call(original_ksampler_call_fn):
         # 원래 함수로 복구
         if self.sigmas[-2].item() >= sigma.item():
             KSamplerX0Inpaint.__call__ = original_ksampler_call_fn
-            logging.debug("\033[94m[middlek image injection] KSamplerX0Inpaint.__call__ return to original_ksampler_call_fn\033[0m")
+            logging.debug("\033[94m[middlek latent injection] KSamplerX0Inpaint.__call__ return to original_ksampler_call_fn\033[0m")
 
         return out
 
