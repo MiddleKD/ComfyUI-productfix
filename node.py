@@ -38,12 +38,15 @@ class ApplyLatentInjection:
                              "inject_mask": ("MASK",),
                              "start_sigma": ("FLOAT", {"default": 15.0}),
                              "end_sigma": ("FLOAT", {"default": 0.0})
-                             }}
+                             },
+                "optional": {"remain_injected":([True, False], {"default":True})
+                           },
+                }
     RETURN_TYPES = ("MODEL", "LATENT",)
     FUNCTION = "apply_latent_injection"
     CATEGORY = "productfix"
 
-    def apply_latent_injection(self, model, latents, inject_image_embed, inject_mask, start_sigma, end_sigma):
+    def apply_latent_injection(self, model, latents, inject_image_embed, inject_mask, start_sigma, end_sigma, remain_injected=True):
         device = model_management.get_torch_device()
         dtype = model_management.VAE_DTYPES[0]
 
@@ -70,7 +73,7 @@ class ApplyLatentInjection:
 
         # 모델 옵션에 latent injection 파라미터 추가
         if hasattr(model, "model_options"):
-            model.model_options["is_latent_inject"] = {"start_sigma":start_sigma, "end_sigma":end_sigma}
+            model.model_options["is_latent_inject"] = {"start_sigma":start_sigma, "end_sigma":end_sigma, "remain_injected":remain_injected}
 
         return (model, latents, )
 
