@@ -40,10 +40,14 @@ def inject_ksamplerx0inpaint_call(original_ksampler_call_fn):
                 out = out * denoise_mask + self.latent_image * latent_mask
 
         # remain injected 옵션에 따라 원래 함수로 복구
-        if remain_injected == False and self.sigmas[-2].item() >= sigma.item():
+        if remain_injected in locals():
+            if remain_injected == False and self.sigmas[-2].item() >= sigma.item():
+                KSamplerX0Inpaint.__call__ = original_ksampler_call_fn
+                logging.debug("\033[94m[middlek latent injection] KSamplerX0Inpaint.__call__ return to original_ksampler_call_fn\033[0m")
+        else:
             KSamplerX0Inpaint.__call__ = original_ksampler_call_fn
             logging.debug("\033[94m[middlek latent injection] KSamplerX0Inpaint.__call__ return to original_ksampler_call_fn\033[0m")
-
+                
         return out
 
     return wrapper
