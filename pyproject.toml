@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-productfix"
+description = "This is a ComfyUI custom node that helps generate images for e-commerce products while maintaining the text, logo, and details of the original product."
+version = "1.0.0"
+license = "LICENSE"
+dependencies = ["diffusers", "easyocr"]
+
+[project.urls]
+Repository = "https://github.com/MiddleKD/ComfyUI-productfix"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-productfix"
+Icon = ""
