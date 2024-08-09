@@ -70,3 +70,60 @@ def add_detail_transfer(target:torch.Tensor, source:torch.Tensor, blur:float, bl
     tensor_out = tensor_out.permute(0, 2, 3, 1).cpu().float()
 
     return tensor_out
+
+def dynamic_resize(image_tensor:torch.Tensor, max_pixels:int=1024*1024, min_pixels:int=512*512):
+    """
+    이미지를 픽셀 수를 기준으로 동적 resize를 수행합니다.
+
+    Args:
+        image_tensor (torch.Tensor): 이미지 텐서
+        max_pixels (int): 최대 픽셀 수
+        min_pixels (int): 최소 픽셀 수
+
+    Returns:
+        torch.Tensor: resize된 이미지 텐서
+    """
+
+    # 마지막 차원이 channel인지 확인
+    if image_tensor.shape[-1] in [3, 4]:
+        need_permute = True
+    else:
+        need_permute = False
+    
+    if len(image_tensor.shape) == 3:
+        need_unsqueeze = True
+    else:
+        need_unsqueeze = False
+    
+    # batch 이미지 형태로 변환 
+    if (need_unsqueeze == False) and (need_permute == True):
+        img_ts = image_tensor.permute(0,3,1,2)
+    elif (need_unsqueeze == True) and (need_permute == True):
+        img_ts = image_tensor.permute(2,0,1).unsqueeze(0)
+    elif (need_unsqueeze == False) and (need_permute == False):
+        img_ts = image_tensor.unsqueeze(0)
+    else:
+        pass
+
+    _, _, height, width = img_ts.shape
+    ratio = height / width
+
+    if height * width > max_pixels:
+        new_height = int((max_pixels * ratio)**0.5)
+        new_width = int(max_pixels / new_height)
+    elif height * width < min_pixels:
+        new_height = int((min_pixels * ratio)**0.5)
+        new_width = int(min_pixels / new_height)
+    else:
+        return image_tensor
+
+    transform_resize = transforms.Resize((new_height, new_width))
+    resized_ts = transform_resize(img_ts)
+
+    # 원래 데이터 형태로 복구
+    if need_permute == True:
+        resized_ts = resized_ts.permute(0,2,3,1)
+    if need_unsqueeze == True:
+        resized_ts = resized_ts[0]
+    
+    return resized_ts

@@ -1,4 +1,4 @@
-import os
+import os, sys
 import logging
 import folder_paths
 
@@ -9,7 +9,7 @@ from comfy.samplers import KSamplerX0Inpaint
 from .advanced_sampler import inject_ksamplerx0inpaint_call
 from .ocr import (get_text_mask, get_languages, language_map)
 from .vq import (load_vq_model, vqmodel_encode, vqmodel_decode)
-from .utils import (simple_resize, add_detail_transfer)
+from .utils import (simple_resize, add_detail_transfer, dynamic_resize)
 
 # ModelPatcher의 calculate_weight 메서드를 초기화하는 클래스
 class ResetModelPatcherCalculateWeight:
@@ -226,3 +226,20 @@ class DetailTransferLatentAdd:
         output_latent = output_image.permute(0,3,1,2)
 
         return (output_latent, )
+    
+# 동적 이미지 리사이즈
+class DynamicImageResize:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                    "image": ("IMAGE",),
+                    "max_pixels": ("INT", {"default": 1024*1024, "min": 500, "max": sys.maxsize, "step": 1}),
+                    "min_pixels": ("INT", {"default": 512*512, "min": 500, "max": sys.maxsize, "step": 1}),
+                    }}
+    RETURN_TYPES = ("IMAGE",)
+    FUNCTION = "dynamic_image_resize"
+    CATEGORY = "productfix"
+
+    def dynamic_image_resize(self, image, max_pixels:int, min_pixels:int):
+        resized_image = dynamic_resize(image, max_pixels=max_pixels, min_pixels=min_pixels)
+        return (resized_image, )
