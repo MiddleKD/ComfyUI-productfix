@@ -1,6 +1,7 @@
 import torch
 from torchvision import transforms
 from comfy import model_management
+from PIL import Image
 
 def simple_resize(image_tensor:torch.Tensor, height, width):
     """
@@ -117,7 +118,7 @@ def dynamic_resize(image_tensor:torch.Tensor, max_pixels:int=1024*1024, min_pixe
     else:
         return image_tensor
 
-    transform_resize = transforms.Resize((new_height, new_width))
+    transform_resize = transforms.Resize((new_height, new_width), interpolation=Image.LANCZOS)
     resized_ts = transform_resize(img_ts)
 
     # 원래 데이터 형태로 복구
