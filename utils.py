@@ -1,7 +1,7 @@
 import torch
 from torchvision import transforms
 from comfy import model_management
-from PIL import Image
+from comfy.utils import lanczos as comfy_lanczos_resize
 
 def simple_resize(image_tensor:torch.Tensor, height, width):
     """
@@ -106,8 +106,11 @@ def dynamic_resize(image_tensor:torch.Tensor, max_pixels:int=1024*1024, min_pixe
     else:
         pass
 
-    _, _, height, width = img_ts.shape
+    _, channel, height, width = img_ts.shape
     ratio = height / width
+
+    if channel != 3:
+        img_ts = img_ts[:,:3,:,:]
 
     if height * width > max_pixels:
         new_height = int((max_pixels * ratio)**0.5)
@@ -118,8 +121,7 @@ def dynamic_resize(image_tensor:torch.Tensor, max_pixels:int=1024*1024, min_pixe
     else:
         return image_tensor
 
-    transform_resize = transforms.Resize((new_height, new_width), interpolation=Image.LANCZOS)
-    resized_ts = transform_resize(img_ts)
+    resized_ts = comfy_lanczos_resize(img_ts, new_width, new_height)
 
     # 원래 데이터 형태로 복구
     if need_permute == True:
