@@ -1,7 +1,7 @@
 import os, sys
 import logging
 import folder_paths
-
+import torch
 from comfy import model_management
 from comfy.model_patcher import ModelPatcher
 from comfy.samplers import KSamplerX0Inpaint
@@ -48,7 +48,7 @@ class ApplyLatentInjection:
 
     def apply_latent_injection(self, model, latents, inject_image_embed, inject_mask, start_sigma, end_sigma, remain_injected=True):
         device = model_management.get_torch_device()
-        dtype = model_management.VAE_DTYPES[0]
+        dtype = model_management.unet_dtype(device)
 
         # KSamplerX0Inpaint의 __call__ 메서드를 수정된 버전으로 교체
         original_ksampler_call_fn = KSamplerX0Inpaint.__call__
