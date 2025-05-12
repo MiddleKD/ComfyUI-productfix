@@ -14,7 +14,8 @@ e-commerce 상품의 텍스트, 로고, 디테일 등을 유지하면서 이미�
 
 - [Introduction](#-introduction)
 - [Features](#-features)
-- [Application](#️-application)
+- [Models and Custom Nodes](#-models-and-custom-nodes)
+- [Application](#-application)
 - [Approach](#-approach)
 - [Install](#-install)
 - [How to use](#-how-to-use)
@@ -48,10 +49,26 @@ Stable diffusion으로 생성한 이미지는 시각적으로 자연스럽고 �
 <details>
   <summary><strong>Reset Model Patcher Calculate Weight</strong></summary>
   <ul>
-    <li>다른 node에서 Modelpatcher의 calculate weight 함수를 injection했다면 오류가 발생하는 custom node가 다수 존재합니다.(ex: comfyui-inpaint-nodes <a href="https://github.com/Acly/comfyui-inpaint-nodes">https://github.com/Acly/comfyui-inpaint-nodes</a>)</li>
+    <li>다른 node에서 Modelpatcher의 calculate weight 함수를 injection했다면 오류가 발생하는 custom node가 다수 존재합니다.(ex: comfyui-inpaint-nodes <a href="https://github.com/Acly/ComfyUI-Easy-Use">https://github.com/yolain/ComfyUI-Easy-Use.git</a>)</li>
     <li>이를 원본 Modelpatcher의 calculate weight로 reset하여 문제를 해결하는 노드입니다.</li>
   </ul>
 </details>
+
+## 📝 Models and Custom Nodes
+
+### Models
+- [realisticVisionV60B1_v51HyperVAE](https://huggingface.co/JCTN/Juggernaut/blob/main/realisticVisionV60B1_v51HyperVAE.safetensors)
+- [ic light](https://huggingface.co/lllyasviel/ic-light/blob/main/iclight_sd15_fc.safetensors)
+- [depth controlnet v1.1](https://huggingface.co/lllyasviel/ControlNet-v1-1/blob/main/control_v11f1p_sd15_depth.pth)
+- [more detail lora](https://civitai.com/models/82098/add-more-details-detail-enhancer-tweaker-lora)
+
+### Custom nodes
+- [ComfyUI-productfix](https://github.com/MiddleKD/ComfyUI-productfix)
+- [comfyui_controlnet_aux v1.0.7](https://github.com/Fannovel16/comfyui_controlnet_aux)
+- [ComfyUI Impact Pack v8.14.2](https://github.com/ltdrdata/ComfyUI-Impact-Pack)
+- [ComfyUI-Easy-Use v1.3.0](https://github.com/yolain/ComfyUI-Easy-Use)
+- [ComfyUI_essentials v1.1.0](https://github.com/cubiq/ComfyUI_essentials)
+- [ComfyUI-IC-Light-Native v1.0.1](https://github.com/huchenlei/ComfyUI-IC-Light-Native) **(not [ComfyUI-IC-Light](https://github.com/lllyasviel/IC-Light))**
 
 ## 🏃🏻‍♂️ Application
 - ### **Comparing “IC-Light + Text” / “IC-Light + Text + Latent Injection”**
@@ -155,11 +172,16 @@ pip install -r requirements.txt
 - **IC-Light + controlnet + text condition + Text transfer + Latent Injection**
     ![latent_injection_flow](assets/productfix_text_comfyui.png)
     
-    [여기서](workflows/productfix_text.json) workflow를 다운로드 할 수 있습니다.
+    [여기서](workflows/productfix_text.json) workflow를 다운로드할 수 있습니다.
+
 - **IC-Light + controlnet + IP-Adapter + Text transfer + Latent Injection**
     ![latent_injection_flow](assets/productfix_adapter_comfyui.png)
 
     [여기서](workflows/productfix_adapter.json) workflow를 다운로드 할 수 있습니다.
+
+### **demo example assets**
+- [product example image](assets/demo_example/pr_example.png)
+- [style example image](assets/demo_example/style_example.jpg)
 
 ## 📚 Reference
 
@@ -170,31 +192,3 @@ This project is based on research and code from several papers and open-source r
 - clip-skip: https://medium.com/@natsunoyuki/clip-skip-with-the-diffusers-library-b2b63f38a443
 - Anton Razzhigaev, Arseniy Shakhmatov, Kandinsky: an Improved Text-to-Image Synthesis with Image Prior and Latent Diffusion, **arXiv**, 2023
 - Chuanxia Zheng, Long Tung Vuong, Jianfei Cai, Dinh Phung, MoVQ: Modulating Quantized Vectors for High-Fidelity Image Generation, **arXiv**, 2022
-
-## 📄 License
-```
-MIT License
-
-Copyright (c) 2024 middlek
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
-## 📞 Contact
-middlek - middlekcenter@gmail.com
